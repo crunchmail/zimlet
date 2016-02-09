@@ -1,0 +1,26 @@
+<zimlet name="com_crunchmail_zimlet"
+        version="VERSION"
+        label="${msg.label}"
+        description="${msg.description}">
+  <include>bundle.js</include>
+  <include>crunchmail_zimlet.js</include>
+  <include>templates/settings.template.js</include>
+  <includeCSS>main.css</includeCSS>
+	<handlerObject>com_crunchmail_zimlet_HandlerObject</handlerObject>
+	<zimletPanelItem label="${msg.label}" icon="Crunchmail-panelIcon">
+        <toolTipText>${msg.description}</toolTipText>
+		<contextMenu>
+			<menuItem icon="Preferences" label="${msg.pref_label}" id="crunchmail_pref"></menuItem>
+		</contextMenu>
+	</zimletPanelItem>
+	<userProperties>
+		<property type="string" label="" name="crunchmail_api_url"/>
+        <property type="string" label="" name="crunchmail_api_key"/>
+        <property type="boolean" label="" name="crunchmail_debug"/>
+        <property type="string" label="" name="crunchmail_contacts_attrs"/>
+        <property type="boolean" label="" name="crunchmail_contacts_include_shared"/>
+        <property type="boolean" label="" name="crunchmail_contacts_dlist_member_of"/>
+        <property type="boolean" label="" name="crunchmail_contacts_dlist_direct_member_only"/>
+        <property type="boolean" label="" name="crunchmail_contacts_dlist_owner_of"/>
+	</userProperties>
+</zimlet>

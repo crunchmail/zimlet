@@ -1,0 +1,32 @@
+{
+  "name": "crunchmail_zimlet",
+  "version": "0.3.0",
+  "license": "UNLICENSED",
+  "private": true,
+  "description": "Zimlet for Crunchmail",
+  "repository": {
+    "type": "git",
+    "url": "git@git.owk.cc:crunchmail/zimlet-crunchmail.git"
+  },
+  "author": "Thomas LEBEAU tlebeau@oasiswork.fr",
+  "dependencies": {},
+  "browser": {},
+  "devDependencies": {
+    "del": "^2.2.0",
+    "git-rev-sync": "^1.4.0",
+    "gulp": "^3.8.11",
+    "gulp-concat": "^2.5.2",
+    "gulp-iconv": "0.0.1",
+    "gulp-if": "^1.2.5",
+    "gulp-jshint": "^1.9.4",
+    "gulp-load-plugins": "^1.2.0",
+    "gulp-notify": "^2.2.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-replace": "^0.5.4",
+    "gulp-sourcemaps": "^1.5.2",
+    "gulp-uglify": "^1.1.0",
+    "gulp-zip": "^3.0.2",
+    "merge-stream": "^1.0.0",
+    "yargs": "^3.25.0"
+  }
+}

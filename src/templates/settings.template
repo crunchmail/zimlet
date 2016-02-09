@@ -1,0 +1,41 @@
+<template id='settings'>
+    <div>
+        <img class="pref_logo" src="/service/zimlet/com_crunchmail_zimlet/crunchmail_logo.png" alt="Crunchmail Logo"/>
+        <div class="pref_section">
+            <h4><$=com_crunchmail_zimlet.pref_title_global$></h4>
+            <div class="pref_row">
+                <label><$=com_crunchmail_zimlet.pref_label_apiurl$></label>
+                <input id="cmpref_apiUrl" type="text" value="<$=data.apiUrl$>"/>
+                <div class="pref_helper"><$=com_crunchmail_zimlet.pref_helper_apiurl$></div>
+            </div>
+            <div class="pref_row">
+                <input id="cmpref_debug" type="checkbox" value="bool" <$=data.debug$>/>
+                <label class="pref_label"><$=com_crunchmail_zimlet.pref_label_debug$></label>
+            </div>
+        </div>
+        <div class="pref_section">
+            <h4><$=com_crunchmail_zimlet.pref_title_contacts$></h4>
+            <div class="pref_row">
+                <label><$=com_crunchmail_zimlet.pref_label_contacts_attrs$></label>
+                <input id="cmpref_contactsAttrs" type="text" value="<$=data.contactsAttrs$>"/>
+                <div class="pref_helper"><$=com_crunchmail_zimlet.pref_helper_contacts_attrs$></div>
+            </div>
+            <div class="pref_row">
+                <input id="cmpref_contactsIncludeShared" type="checkbox" value="bool" <$=data.contactsIncludeShared$>/>
+                <label><$=com_crunchmail_zimlet.pref_label_contacts_include_shared$></label>
+            </div>
+            <div class="pref_row">
+                <input id="cmpref_contactsDlistMemberOf" type="checkbox" value="bool" <$=data.contactsDlistMemberOf$>/>
+                <label><$=com_crunchmail_zimlet.pref_label_contacts_dlist_member_of$></label>
+            </div>
+            <div class="pref_row">
+                <input id="cmpref_contactsDlistDirectMemberOnly" type="checkbox" value="bool" <$=data.contactsDlistDirectMemberOnly$>/>
+                <label><$=com_crunchmail_zimlet.pref_label_contacts_dlist_direct_member_only$></label>
+            </div>
+            <div class="pref_row">
+                <input id="cmpref_contactsDlistOwnerOf" type="checkbox" value="bool" <$=data.contactsDlistOwnerOf$>/>
+                <label><$=com_crunchmail_zimlet.pref_label_contacts_dlist_owner_of$></label>
+            </div>
+        </div>
+    </div>
+</template>

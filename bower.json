@@ -1,0 +1,24 @@
+{
+  "name": "crunchmail_zimlet",
+  "version": "0.3.0",
+  "authors": [
+    "Crunchmail"
+  ],
+  "description": "",
+  "main": "",
+  "moduleType": [],
+  "license": "UNLICENSED",
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "humps": "~1.0.0",
+    "raven-js": "^2.1.0"
+  }
+}

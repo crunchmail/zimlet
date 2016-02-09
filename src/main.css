@@ -1,0 +1,134 @@
+.ImgCrunchmail-panelIcon {
+    background: url("crunchmail.png") no-repeat 0 0;
+    width: 16px;
+    height: 16px;
+    overflow: hidden;
+}
+
+.pref_logo {
+    display: block;
+    margin: 10px auto;
+    width: 125px;
+    height: 89px;
+}
+
+.pref_section {
+    margin-bottom: 30px;
+}
+
+.pref_section h4 {
+    margin: 15px auto 20px;
+    text-align: center;
+    border-bottom: 1px solid #ccc;
+    width: 70%;
+    padding-bottom: 0.5em;
+}
+
+.pref_row {
+    margin: 5px 0 10px;
+    min-width: 450px;
+}
+
+.pref_row label {
+    padding-left: 1em;
+}
+
+.pref_row input[type=text] {
+    display: block;
+    text-align: center;
+    margin: 0.5em auto;
+    width: 90%;
+}
+
+.pref_row input[type=checkbox] {
+    margin-left: 1em;
+}
+
+.pref_helper {
+    font-size: 0.8em;
+    color: #747474;
+    text-align: center;
+}
+
+.overlay {
+    position: absolute;
+    background: #f8fcfe;
+    z-index: 100;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 1;
+    transition: opacity 0.5s ease;
+    overflow: hidden;
+}
+
+.overlay.isHidden {
+    opacity: 0;
+    height: 0;
+}
+
+#tabiframe-app {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    display: none;
+}
+
+.spinner {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 100%;
+    text-align: center;
+}
+
+.spinner > div {
+    width: 18px;
+    height: 18px;
+    background-color: #409ad5;
+
+    border-radius: 100%;
+    display: inline-block;
+    -webkit-animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+    animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+}
+
+.spinner .bounce1 {
+    -webkit-animation-delay: -0.32s;
+    animation-delay: -0.32s;
+}
+
+.spinner .bounce2 {
+    -webkit-animation-delay: -0.16s;
+    animation-delay: -0.16s;
+}
+
+@-webkit-keyframes sk-bouncedelay {
+    0%, 80%, 100% { -webkit-transform: scale(0) }
+    40% { -webkit-transform: scale(1.0) }
+}
+
+@keyframes sk-bouncedelay {
+    0%, 80%, 100% {
+        -webkit-transform: scale(0);
+        transform: scale(0);
+        } 40% {
+            -webkit-transform: scale(1.0);
+            transform: scale(1.0);
+        }
+    }
+
+@-webkit-keyframes sk-bouncedelay {
+    100% {
+        display: none;
+    }
+}
+
+@keyframes hide {
+    100% {
+        display: none;
+    }
+}
