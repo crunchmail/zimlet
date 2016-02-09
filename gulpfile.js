@@ -41,7 +41,7 @@ gulp.task('clean', function() {
 });
 
 // Build
-gulp.task('dist', ['jshint'], function() {
+gulp.task('dist', ['clean', 'jshint'], function() {
 
 	var bundle = gulp.src([
 		'bower_components/humps/humps.js',
@@ -64,11 +64,11 @@ gulp.task('dist', ['jshint'], function() {
 		'src/js/main.js',
 		'src/js/*',
 	])
-	.pipe(plugins.gulpif(prod, plugins.sourcemaps.init()))
+	.pipe(plugins.sourcemaps.init())
 		.pipe(plugins.concat('crunchmail_zimlet.js'))
 		// only minify for production (a lot faster)
 		.pipe(plugins.gulpif(prod, plugins.uglify({mangle: true})))
-	.pipe(plugins.gulpif(prod, plugins.sourcemaps.write()))
+	.pipe(plugins.sourcemaps.write())
 	.pipe(gulp.dest(dist));
 
 	gulp.src('src/' + argv.env + '-config_template.xml')
@@ -99,13 +99,13 @@ gulp.task('dist', ['jshint'], function() {
 });
 
 // Zip
-gulp.task('zip', function() {
-	gulp.src(dist + '**')
+gulp.task('zip', ['dist'], function() {
+	return gulp.src(dist + '**')
 	.pipe(plugins.zip('com_crunchmail_zimlet.zip'))
 	.pipe(gulp.dest(zip_dist))
-    .pipe(plugins.notify({ message: 'Zimlet ZIP available at: ' + zip_dist }));
+    .pipe(plugins.notify({ message: 'Zimlet ZIP available at: ' + zip_dist + 'com_crunchmail_zimlet.zip' }));
 });
 
 gulp.task('default', function() {
-	gulp.start('clean', 'dist', 'zip');
+	gulp.start('zip');
 });
