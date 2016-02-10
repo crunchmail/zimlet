@@ -99,12 +99,10 @@ crunchmailZimlet.prototype.postContacts = function() {
         if (iframe.classList.contains('iframeLoaded')) {
             logger.info("iframe has class iframeLoaded");
             this.postMessage({'contacts': [this.zimbraContacts]});
-            this.postMessage({'apiKey': crunchmailZimlet.settings.apiKey});
         } else {
             iframe.addEventListener('load', function() {
                 logger.info("iframe loaded");
                 that.postMessage({'contacts': [this.zimbraContacts]});
-                that.postMessage({'apiKey': crunchmailZimlet.settings.apiKey});
                 iframe.classList.add('iframeLoaded');
                 iframe.style.display = "block";
                 overlay.classList.add("isHidden");

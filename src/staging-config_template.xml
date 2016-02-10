@@ -3,7 +3,7 @@
   <global>
     <property name="zimlet_version">VERSION</property>
     <property name="zimlet_commit">COMMIT</property>
-    <property name="iframe_url">https://dentifrice.crunchmail.net/zimlet/#/</property>
+    <property name="iframe_url">https://cdn.crunchmail.net/zimlet-staging/#/</property>
     <property name="default_api_url">https://staging.crunchmail.net/</property>
     <property name="sentry_dsn">https://1a2b0239ccd441a0ba97a42e85083e2d@sentry.owk.cc/9</property>
     <property name="sentry_debug">true</property>
