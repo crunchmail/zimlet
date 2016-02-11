@@ -335,6 +335,11 @@ crunchmailZimlet.prototype.handleDlists = function(params, result) {
                 this.dlsList.push(dl.name);
             }
         }
+    } else {
+        // No Dlists, simply mark as done
+        this.contactsTracker.push('dls');
+        // Trigger postMessage in case we're last
+        this.postContacts();
     }
 
     // Fetch all Dlists members
