@@ -102,7 +102,7 @@ crunchmailZimlet.prototype.postContacts = function() {
         } else {
             iframe.addEventListener('load', function() {
                 logger.info("iframe loaded");
-                that.postMessage({'contacts': [this.zimbraContacts]});
+                that.postMessage({'contacts': [that.zimbraContacts]});
                 iframe.classList.add('iframeLoaded');
                 iframe.style.display = "block";
                 overlay.classList.add("isHidden");
