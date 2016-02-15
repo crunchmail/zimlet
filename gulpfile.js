@@ -24,6 +24,7 @@ var p = require('./package.json');
 var git = require('git-rev-sync');
 var zimlet_version = p.version;
 var zimlet_commit = git.short();
+var sentry_dsn = 'https://ed60ef07a8de41989ef31e2886abf9c9@sentry.owk.cc/8';
 
 // Validate JS
 gulp.task('jshint', function() {
@@ -75,6 +76,8 @@ gulp.task('dist', ['clean', 'jshint'], function() {
 	.pipe(plugins.rename('config_template.xml'))
 	.pipe(plugins.replace('VERSION', zimlet_version))
 	.pipe(plugins.replace('COMMIT', zimlet_commit))
+	.pipe(plugins.replace('ENVIRONMENT', argv.env))
+	.pipe(plugins.replace('SENTRY_DSN', sentry_dsn))
 	.pipe(gulp.dest(dist));
 
 	var properties = gulp.src('src/*.properties')

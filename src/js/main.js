@@ -42,6 +42,7 @@ crunchmailZimlet.prototype._setupRaven = function() {
             release: this._zimletContext.getConfig('zimlet_version'),
             tags: {
                 git_commit: this._zimletContext.getConfig('zimlet_commit'),
+                env: this._zimletContext.getConfig('zimlet_env'),
                 zimbra_version: appCtxt.get(ZmSetting.CLIENT_VERSION)
             }
         });
