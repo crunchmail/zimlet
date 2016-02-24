@@ -2,6 +2,13 @@ function com_crunchmail_zimlet_HandlerObject() {
     com_crunchmail_zimlet_HandlerObject.settings = {};
 }
 
+function _getQueryArgByName (name) {
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+    results = regex.exec(location.search);
+    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
 com_crunchmail_zimlet_HandlerObject.prototype = new ZmZimletBase();
 com_crunchmail_zimlet_HandlerObject.prototype.constructor = com_crunchmail_zimlet_HandlerObject;
 var crunchmailZimlet = com_crunchmail_zimlet_HandlerObject;
@@ -73,6 +80,8 @@ crunchmailZimlet.prototype.init = function() {
     crunchmailZimlet.settings.apiKey = this._getOrSaveSetting('crunchmail_api_key', '');
     // we enable debug by default for now
     crunchmailZimlet.settings.debug = this._getOrSaveSetting('crunchmail_debug', true);
+    // also set debug True if the webmail is running in dev mode (ie. ?dev=1 in url)
+    crunchmailZimlet.settings.debug = _getQueryArgByName(dev) === 1 ? true : crunchmailZimlet.settings.debug;
 
     // contacts related settings
     crunchmailZimlet.settings.contactsAttrs = this._getOrSaveSetting('crunchmail_contacts_attrs', 'namePrefix,firstName,lastName');
