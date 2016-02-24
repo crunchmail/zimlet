@@ -368,6 +368,15 @@ crunchmailZimlet.prototype.handleDlistsCheckGALStatus = function(params, result)
             // We need to remove it from our temp container
             // so it does not block processing the other lists
             delete this.dls[dl.name];
+
+            if (Object.keys(this.dls).length === 0) {
+                // All the DLists have been processed
+                // Mark as done
+                this.contactsTracker.push('dls');
+                // Trigger postMessage in case we're last
+                this.postContacts();
+            }
+
             return;
         }
         // Fetch Dlist members
