@@ -17,7 +17,7 @@ crunchmailZimlet.prototype.sendRequest = function(request, urn, args, callback, 
         jsonObj       : jsonObj,
         asyncMode     : true,
         callback      : new AjxCallback(this, callback, callbackArgs),
-        errorCallback : new AjxCallback(this, this.requestErrorCallback, request)
+        errorCallback : new AjxCallback(this, this.requestErrorCallback, {request: request, args: callbackArgs})
     };
 
     appCtxt.getAppController().sendRequest(params);
@@ -27,14 +27,14 @@ crunchmailZimlet.prototype.sendRequest = function(request, urn, args, callback, 
 /**
  * Handle request errors
  */
-crunchmailZimlet.prototype.requestErrorCallback = function(request, err) {
+crunchmailZimlet.prototype.requestErrorCallback = function(params, err) {
     this._raven.captureException(new Error(err.msg), {extra: {request: err.request}});
 
-    params = {
-        msg: this.getMessage('error_' + request.toLowerCase()),
+    statusmsg = {
+        msg: this.getMessage('error_' + params.request.toLowerCase()),
         level: ZmStatusView.LEVEL_WARNING
     };
-    this.displayStatusMessage(params);
+    this.displayStatusMessage(statusmsg);
 
     logger.debug('Request error: ' + err.msg);
     logger.debug(err.request);
@@ -331,6 +331,7 @@ crunchmailZimlet.prototype.handleDlists = function(params, result) {
                     itemDL.name = dl.d;
                 }
 
+                // Temporary containers used for handling async members fetching
                 this.dls[dl.name] = itemDL;
                 this.dlsList.push(dl.name);
             }
@@ -343,10 +344,35 @@ crunchmailZimlet.prototype.handleDlists = function(params, result) {
     }
 
     // Fetch all Dlists members
+
+    // We need an intermediary request to GetDistributionList to check
+    // if it is hidden in GAL (which breaks getting the members)
+    // TODO: find a way to get around this...
     var that = this;
     this.dlsList.forEach(function(item) {
-        that.sendRequest('GetDistributionListMembersRequest', 'zimbraAccount', {dl: {_content: item}}, that.handleDlistsMembers, {dl: item});
+        that.sendRequest('GetDistributionListRequest', 'zimbraAccount', {dl: {by: 'name', _content: item}}, that.handleDlistsCheckGALStatus);
     });
+};
+
+crunchmailZimlet.prototype.handleDlistsCheckGALStatus = function(params, result) {
+    response = result.getResponse();
+
+    logger.debug('Check distribution lists GAL status');
+    logger.debug(response);
+    if (response.GetDistributionListResponse.hasOwnProperty('dl')) {
+        dl = response.GetDistributionListResponse.dl[0];
+        if (dl._attrs.zimbraHideInGal == "TRUE") {
+            // DList hidden in GAL, a request for members will throw a
+            // "no such list" error, so don't bother
+            console.info('Ignoring dlist ' + dl.name + ' since it is hidden in GAL');
+            // We need to remove it from our temp container
+            // so it does not block processing the other lists
+            delete this.dls[dl.name];
+            return;
+        }
+        // Fetch Dlist members
+        that.sendRequest('GetDistributionListMembersRequest', 'zimbraAccount', {dl: {_content: dl.name}}, that.handleDlistsMembers, {dl: dl.name});
+    }
 };
 
 
@@ -354,7 +380,7 @@ crunchmailZimlet.prototype.handleDlists = function(params, result) {
  * Handle GetDistributionListMembers response
  */
 crunchmailZimlet.prototype.handleDlistsMembers = function(params, result) {
-    var response = result.getResponse();
+    response = result.getResponse();
     var dl = params.dl;
 
     logger.debug('Get distribution list members response');
@@ -366,6 +392,7 @@ crunchmailZimlet.prototype.handleDlistsMembers = function(params, result) {
             member = membersArr[m]._content;
 
             // We want to exclude members that are known Dlists
+            // TODO: This prevents retrieval of nested DLists, FIX
             if (this.dlsList.indexOf(member) === -1) {
                 var memberObj = {
                     'email': member,
@@ -376,7 +403,7 @@ crunchmailZimlet.prototype.handleDlistsMembers = function(params, result) {
             }
         }
         this.zimbraContacts.dls.push(this.dls[dl]);
-        // delete from tmp object so we can determine when we're done
+        // delete from temp container so we can determine when we're done
         delete this.dls[dl];
     }
 
