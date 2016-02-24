@@ -81,7 +81,7 @@ crunchmailZimlet.prototype.init = function() {
     // we enable debug by default for now
     crunchmailZimlet.settings.debug = this._getOrSaveSetting('crunchmail_debug', true);
     // also set debug True if the webmail is running in dev mode (ie. ?dev=1 in url)
-    crunchmailZimlet.settings.debug = _getQueryArgByName(dev) === 1 ? true : crunchmailZimlet.settings.debug;
+    crunchmailZimlet.settings.debug = _getQueryArgByName('dev') === 1 ? true : crunchmailZimlet.settings.debug;
 
     // contacts related settings
     crunchmailZimlet.settings.contactsAttrs = this._getOrSaveSetting('crunchmail_contacts_attrs', 'namePrefix,firstName,lastName');
