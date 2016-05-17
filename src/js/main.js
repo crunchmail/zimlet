@@ -205,4 +205,12 @@ crunchmailZimlet.prototype._setTabContent = function(appName) {
         'src="'+ crunchmailZimlet.settings.iframeUrl +'?apiUrl='+ crunchmailZimlet.settings.apiUrl +'&apiKey='+ crunchmailZimlet.settings.apiKey +'" ' +
         'width="100%" height="100%" /></iframe>'
     );
+
+    var iframe = document.getElementById('tabiframe-app');
+    iframe.addEventListener('load', function() {
+        logger.info("iframe loaded");
+        iframe.classList.add('iframeLoaded');
+        iframe.style.display = "block";
+        overlay.classList.add("isHidden");
+    });
 };

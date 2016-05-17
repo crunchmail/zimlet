@@ -97,15 +97,12 @@ crunchmailZimlet.prototype.postContacts = function() {
         // TODO: we shouldn't be touching the overlay, iFrame can do it itself
         var iframe = document.getElementById('tabiframe-app');
         if (iframe.classList.contains('iframeLoaded')) {
-            logger.info("iframe has class iframeLoaded");
+            logger.info('iframe already loaded, posting contacts');
             this.postMessage({'contacts': [this.zimbraContacts]});
         } else {
             iframe.addEventListener('load', function() {
-                logger.info("iframe loaded");
+                logger.info("posting contacts to iframe");
                 that.postMessage({'contacts': [that.zimbraContacts]});
-                iframe.classList.add('iframeLoaded');
-                iframe.style.display = "block";
-                overlay.classList.add("isHidden");
             });
         }
     } else {
