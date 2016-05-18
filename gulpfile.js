@@ -13,8 +13,7 @@ var del = require('del');
 var merge = require('merge-stream');
 
 // Define some variables
-var dist = 'dist/' + argv.env + '/zimlet/';
-var zip_dist = 'dist/' + argv.env + '/';
+var dev = argv.dev
 var prod = argv.env == 'prod' ? true : false;
 // allow to force prod-like behavior (minifying mostly)
 prod = argv.prod ? true : prod;
@@ -22,9 +21,13 @@ prod = argv.prod ? true : prod;
 // Get the current version for zimlet
 var p = require('./package.json');
 var git = require('git-rev-sync');
-var zimlet_version = p.version;
+var zimlet_version = dev === true ? 'dev' : p.version;
 var zimlet_commit = git.short();
 var sentry_dsn = 'https://ed60ef07a8de41989ef31e2886abf9c9@sentry.owk.cc/8';
+var dist = 'dist/' + argv.env + '/zimlet/';
+var zip_name = 'com_crunchmail_zimlet.zip';
+var zip_dest = 'dist/' + argv.env + '/' + zimlet_version + '/';
+
 
 // Validate JS
 gulp.task('jshint', function() {
@@ -37,7 +40,7 @@ gulp.task('jshint', function() {
 gulp.task('clean', function() {
 	return del([
 		dist+'**/*',
-		zip_dist+'com_crunchmail_zimlet.zip'
+		zip_dest + zip_name
 	]);
 });
 
@@ -104,9 +107,9 @@ gulp.task('dist', ['clean', 'jshint'], function() {
 // Zip
 gulp.task('zip', ['dist'], function() {
 	return gulp.src(dist + '**')
-	.pipe(plugins.zip('com_crunchmail_zimlet.zip'))
-	.pipe(gulp.dest(zip_dist))
-    .pipe(plugins.notify({ message: 'Zimlet ZIP available at: ' + zip_dist + 'com_crunchmail_zimlet.zip' }));
+	.pipe(plugins.zip(zip_name))
+	.pipe(gulp.dest(zip_dest))
+    .pipe(plugins.notify({ message: 'Zimlet ZIP available at: ' + zip_dest + zip_name }));
 });
 
 gulp.task('default', function() {

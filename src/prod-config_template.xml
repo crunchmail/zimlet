@@ -5,7 +5,7 @@
     <property name="zimlet_commit">COMMIT</property>
     <property name="zimlet_env">ENVIRONMENT</property>
     <property name="iframe_url">https://cdn.crunchmail.net/zimlet/#/</property>
-    <property name="default_api_url">https://api.crunchmail.net/</property>
+    <property name="default_api_url">https://api.crunchmail.com/</property>
     <property name="sentry_dsn">SENTRY_DSN</property>
     <property name="sentry_debug">false</property>
   </global>
