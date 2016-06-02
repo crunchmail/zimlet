@@ -3,8 +3,7 @@
  */
 crunchmailZimlet.prototype._messageListener = function(data) {
     var message = JSON.parse(data);
-
-    logger.debug('PostMessage received');
+    logger.debug(message);
 
     if(message.content.hasOwnProperty("apiKey")) {
         // Save new apiKey in Zimbra preference

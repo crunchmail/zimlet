@@ -75,7 +75,6 @@ crunchmailZimlet.prototype.fetchContacts = function() {
     this.sendRequest('GetTagRequest', 'zimbraMail', {}, this.handleTags);
 };
 
-
 /**
  * Store retrieved contacts and send them to iFrame once done
  */
@@ -94,17 +93,8 @@ crunchmailZimlet.prototype.postContacts = function() {
         // We collected everything, post it to iFrame
         logger.info('All contacts processed, sending !');
 
-        // TODO: we shouldn't be touching the overlay, iFrame can do it itself
-        var iframe = document.getElementById('tabiframe-app');
-        if (iframe.classList.contains('iframeLoaded')) {
-            logger.info('iframe already loaded, posting contacts');
-            this.postMessage({'contacts': [this.zimbraContacts]});
-        } else {
-            iframe.addEventListener('load', function() {
-                logger.info("posting contacts to iframe");
-                that.postMessage({'contacts': [that.zimbraContacts]});
-            });
-        }
+        this.postMessage({'contacts': [this.zimbraContacts]});
+
     } else {
         logger.debug('Not yet ready to post zimbraContacts...');
     }

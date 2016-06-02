@@ -117,9 +117,6 @@ crunchmailZimlet.prototype.appActive = function(appName, active) {
             if (active) {
                 logger.debug("App active");
 
-                logger.debug('Starting contacts fetch');
-                this.fetchContacts();
-
                 /*
                 * reload iframe if API URL has changed
                 */
@@ -198,9 +195,6 @@ crunchmailZimlet.prototype._setTabContent = function(appName) {
     logger.debug('Setting tab content');
     // create iframe ...
     app.setContent(
-        '<div id="overlay" class="overlay">' +
-        '<div class="spinner"><div class="bounce1"></div><div class="bounce2"></div><div class="bounce3"></div></div>' +
-        '</div>' +
         '<iframe id="tabiframe-app" style="border:0;" name="tabiframe-app" ' +
         'src="'+ crunchmailZimlet.settings.iframeUrl +'?apiUrl='+ crunchmailZimlet.settings.apiUrl +'&apiKey='+ crunchmailZimlet.settings.apiKey +'" ' +
         'width="100%" height="100%" /></iframe>'
