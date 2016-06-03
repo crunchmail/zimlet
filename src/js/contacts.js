@@ -28,7 +28,9 @@ crunchmailZimlet.prototype.sendRequest = function(request, urn, args, callback, 
  * Handle request errors
  */
 crunchmailZimlet.prototype.requestErrorCallback = function(params, err) {
-    this._raven.captureException(new Error(err.msg), {extra: {request: err.request}});
+    if (this._raven !== undefined) {
+        this._raven.captureException(new Error(err.msg), {extra: {request: err.request}});
+    }
 
     statusmsg = {
         msg: this.getMessage('error_' + params.request.toLowerCase()),
@@ -319,7 +321,7 @@ crunchmailZimlet.prototype.handleDlists = function(params, result) {
                 }
 
                 // Temporary containers used for handling async members fetching
-                this.dls[dl.name] = itemDL;
+                this.dls[dl.id] = itemDL;
                 this.dlsList.push(dl.name);
             }
         }
@@ -336,13 +338,18 @@ crunchmailZimlet.prototype.handleDlists = function(params, result) {
     // if it is hidden in GAL (which breaks getting the members)
     // TODO: find a way to get around this...
     var that = this;
-    this.dlsList.forEach(function(item) {
-        that.sendRequest('GetDistributionListRequest', 'zimbraAccount', {dl: {by: 'name', _content: item}}, that.handleDlistsCheckGALStatus);
-    });
+    for (var key in this.dls) {
+        var item = this.dls[key];
+        that.sendRequest('GetDistributionListRequest', 'zimbraAccount', {dl: {by: 'name', _content: item.email}}, that.handleDlistsCheckGALStatus, {dl: item});
+    }
+    // this.dlsList.forEach(function(item) {
+    //     that.sendRequest('GetDistributionListRequest', 'zimbraAccount', {dl: {by: 'name', _content: item}}, that.handleDlistsCheckGALStatus, {dl: item});
+    // });
 };
 
 crunchmailZimlet.prototype.handleDlistsCheckGALStatus = function(params, result) {
     response = result.getResponse();
+    var dl_transfer = params.dl;
 
     logger.debug('Check distribution lists GAL status');
     logger.debug(response);
@@ -351,10 +358,14 @@ crunchmailZimlet.prototype.handleDlistsCheckGALStatus = function(params, result)
         if (dl._attrs.zimbraHideInGal == "TRUE") {
             // DList hidden in GAL, a request for members will throw a
             // "no such list" error, so don't bother
-            console.info('Ignoring dlist ' + dl.name + ' since it is hidden in GAL');
+            console.info('Ignoring dlist ' + dl.email + ' since it is hidden in GAL');
             // We need to remove it from our temp container
             // so it does not block processing the other lists
-            delete this.dls[dl.name];
+            try {
+                delete this.dls[dl.id];
+            } catch(e) {
+                logger.debug('Unable to delete DL with ID: '+dl.id+' from this.dls in handleDlistsCheckGALStatus.');
+            }
 
             if (Object.keys(this.dls).length === 0) {
                 // All the DLists have been processed
@@ -367,7 +378,7 @@ crunchmailZimlet.prototype.handleDlistsCheckGALStatus = function(params, result)
             return;
         }
         // Fetch Dlist members
-        that.sendRequest('GetDistributionListMembersRequest', 'zimbraAccount', {dl: {_content: dl.name}}, that.handleDlistsMembers, {dl: dl.name});
+        that.sendRequest('GetDistributionListMembersRequest', 'zimbraAccount', {dl: {_content: dl.name}}, that.handleDlistsMembers, {dl: dl_transfer});
     }
 };
 
@@ -393,14 +404,20 @@ crunchmailZimlet.prototype.handleDlistsMembers = function(params, result) {
                 var memberObj = {
                     'email': member,
                     'source_type': 'zimbra',
-                    'source_ref': 'dl:' + this.dls[dl].id
+                    'source_ref': 'dl:' + dl.id
                 };
-                this.dls[dl].members.push(memberObj);
+                dl.members.push(memberObj);
+                // this.dls[dl].members.push(memberObj);
             }
         }
-        this.zimbraContacts.dls.push(this.dls[dl]);
+        this.zimbraContacts.dls.push(dl);
+        // this.zimbraContacts.dls.push(this.dls[dl]);
         // delete from temp container so we can determine when we're done
-        delete this.dls[dl];
+        try {
+            delete this.dls[dl.id];
+        } catch(e) {
+            logger.debug('Unable to delete DL with ID: '+dl.id+' from this.dls in handleDlistsMembers.');
+        }
     }
 
     if (Object.keys(this.dls).length === 0) {
