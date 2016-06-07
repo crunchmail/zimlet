@@ -67,9 +67,9 @@ crunchmailZimlet.prototype._prefSaveBtn = function() {
             if (s === 'apiUrl' && crunchmailZimlet.settings.apiUrl !== val) crunchmailZimlet.settings.apiUrlChanged = true;
 
             if (val === 'bool') {
-                crunchmailZimlet.settings[s] = that._getOrSaveSetting('crunchmail_'+humps.decamelize(s), el.checked, true);
+                crunchmailZimlet.settings[s] = that._getOrSaveSetting(humps.decamelize(s), el.checked, true, true);
             } else {
-                crunchmailZimlet.settings[s] = that._getOrSaveSetting('crunchmail_'+humps.decamelize(s), val, true);
+                crunchmailZimlet.settings[s] = that._getOrSaveSetting(humps.decamelize(s), val, true, true);
             }
         }
     });

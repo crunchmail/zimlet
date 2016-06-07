@@ -66,6 +66,7 @@ gulp.task('dist', ['clean', 'jshint'], function() {
 	var js = gulp.src([
 		'src/js/logger.module.js',
 		'src/js/main.js',
+		'src/js/soap.js',
 		'src/js/*',
 	])
 	.pipe(plugins.sourcemaps.init())

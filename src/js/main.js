@@ -13,12 +13,19 @@ com_crunchmail_zimlet_HandlerObject.prototype = new ZmZimletBase();
 com_crunchmail_zimlet_HandlerObject.prototype.constructor = com_crunchmail_zimlet_HandlerObject;
 var crunchmailZimlet = com_crunchmail_zimlet_HandlerObject;
 
-crunchmailZimlet.prototype._getOrSaveSetting = function(setting, value, save) {
+crunchmailZimlet.prototype._getOrSaveSetting = function(setting, value, save, force_save) {
     save = undefined === save ? false : save;
+    force_save = undefined === force_save ? false : force_save;
+    // if force_save, we need to pass save to setUserProperty anyway
+    if (force_save) save = true;
+    
     var currentSetting = this.getUserProperty(setting);
 
-    if (undefined === currentSetting || save) {
+    if ((undefined === currentSetting && save) || force_save) {
         // setting does not exist or we want to override it
+        var protectedValue = setting == 'api_key' ? logger.hide(value) : value;
+        logger.debug('Saving user setting "' + setting + '", value: ' + protectedValue);
+
         this.setUserProperty(setting, value, save);
         return value;
     } else {
@@ -74,21 +81,41 @@ crunchmailZimlet.prototype.init = function() {
 
     // store the settings to be used throughout the application
     crunchmailZimlet.settings.iframeUrl = this._zimletContext.getConfig('iframe_url');
-    crunchmailZimlet.settings.apiUrl = this._getOrSaveSetting('crunchmail_api_url', this._zimletContext.getConfig('default_api_url'));
+
+    /** TEMP **/
+    previous_url = this._zimletContext.getConfig('default_api_url');
+    if (this.getUserProperty('crunchmail_api_url') !== undefined) {
+        previous_url = this.getUserProperty('crunchmail_api_url');
+    }
+    crunchmailZimlet.settings.apiUrl = this._getOrSaveSetting('api_url', previous_url, true);
+    /*****/
+    // crunchmailZimlet.settings.apiUrl = this._getOrSaveSetting('crunchmail_api_url', this._zimletContext.getConfig('default_api_url'), true);
+
     // simple flag to allow iframe reloading when setting is changed
     crunchmailZimlet.settings.apiUrlChanged = false;
-    crunchmailZimlet.settings.apiKey = this._getOrSaveSetting('crunchmail_api_key', '');
+
+    /** TEMP **/
+    previous_key = '';
+    if (this.getUserProperty('crunchmail_api_key') !== undefined) {
+        previous_key = this.getUserProperty('crunchmail_api_key');
+    }
+    crunchmailZimlet.settings.apiKey = this._getOrSaveSetting('api_key', previous_key, true);
+    /*****/
+    // crunchmailZimlet.settings.apiKey = this._getOrSaveSetting('crunchmail_api_key', '', true);
+
     // we enable debug by default for now
-    crunchmailZimlet.settings.debug = this._getOrSaveSetting('crunchmail_debug', true);
+    crunchmailZimlet.settings.debug = this._getOrSaveSetting('debug', true, true);
     // also set debug True if the webmail is running in dev mode (ie. ?dev=1 in url)
     crunchmailZimlet.settings.debug = _getQueryArgByName('dev') === 1 ? true : crunchmailZimlet.settings.debug;
 
+    crunchmailZimlet.settings.experimental = this._getOrSaveSetting('experimental', false, true);
+
     // contacts related settings
-    crunchmailZimlet.settings.contactsAttrs = this._getOrSaveSetting('crunchmail_contacts_attrs', 'namePrefix,firstName,lastName');
-    crunchmailZimlet.settings.contactsIncludeShared = this._getOrSaveSetting('crunchmail_contacts_include_shared', true);
-    crunchmailZimlet.settings.contactsDlistMemberOf = this._getOrSaveSetting('crunchmail_contacts_dlist_member_of', true);
-    crunchmailZimlet.settings.contactsDlistDirectMemberOnly = this._getOrSaveSetting('crunchmail_contacts_dlist_direct_member_only', true);
-    crunchmailZimlet.settings.contactsDlistOwnerOf = this._getOrSaveSetting('crunchmail_contacts_dlist_owner_of', true);
+    crunchmailZimlet.settings.contactsAttrs = this._getOrSaveSetting('contacts_attrs', 'firstName,lastName', true);
+    crunchmailZimlet.settings.contactsIncludeShared = this._getOrSaveSetting('contacts_include_shared', true, true);
+    crunchmailZimlet.settings.contactsDlistMemberOf = this._getOrSaveSetting('contacts_dlist_member_of', true, true);
+    crunchmailZimlet.settings.contactsDlistDirectMemberOnly = this._getOrSaveSetting('contacts_dlist_direct_member_only', true, true);
+    crunchmailZimlet.settings.contactsDlistIncludeHideInGal = this._getOrSaveSetting('contacts_dlist_include_hide_in_gal', true, true);
 
     // showtime
     this._Crunchmail = this.createApp("Crunchmail", "tabIcon", "Crunchmail");

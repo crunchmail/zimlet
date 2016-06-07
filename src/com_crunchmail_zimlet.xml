@@ -14,13 +14,14 @@
 		</contextMenu>
 	</zimletPanelItem>
 	<userProperties>
-		<property type="string" label="" name="crunchmail_api_url"/>
-        <property type="string" label="" name="crunchmail_api_key"/>
-        <property type="boolean" label="" name="crunchmail_debug"/>
-        <property type="string" label="" name="crunchmail_contacts_attrs"/>
-        <property type="boolean" label="" name="crunchmail_contacts_include_shared"/>
-        <property type="boolean" label="" name="crunchmail_contacts_dlist_member_of"/>
-        <property type="boolean" label="" name="crunchmail_contacts_dlist_direct_member_only"/>
-        <property type="boolean" label="" name="crunchmail_contacts_dlist_owner_of"/>
+		<property type="string" label="" name="api_url"/>
+        <property type="string" label="" name="api_key"/>
+        <property type="boolean" label="" name="debug"/>
+        <property type="boolean" label="" name="experimental"/>
+        <property type="string" label="" name="contacts_attrs"/>
+        <property type="boolean" label="" name="contacts_include_shared"/>
+        <property type="boolean" label="" name="contacts_dlist_member_of"/>
+        <property type="boolean" label="" name="contacts_dlist_direct_member_only"/>
+        <property type="boolean" label="" name="contacts_dlist_owner_of"/>
 	</userProperties>
 </zimlet>

@@ -1,49 +1,4 @@
 /**
- * Send SOAP request to Zimbra
- */
-crunchmailZimlet.prototype.sendRequest = function(request, urn, args, callback, callbackArgs) {
-    callbackArgs = undefined === callbackArgs ? {} : callbackArgs;
-
-    var jsonObj = {};
-    jsonObj[request] = { _jsns: 'urn:'+urn };
-
-    for (var key in args) {
-        if (args.hasOwnProperty(key)) {
-            jsonObj[request][key] = args[key];
-        }
-    }
-
-    var params = {
-        jsonObj       : jsonObj,
-        asyncMode     : true,
-        callback      : new AjxCallback(this, callback, callbackArgs),
-        errorCallback : new AjxCallback(this, this.requestErrorCallback, {request: request, args: callbackArgs})
-    };
-
-    appCtxt.getAppController().sendRequest(params);
-};
-
-
-/**
- * Handle request errors
- */
-crunchmailZimlet.prototype.requestErrorCallback = function(params, err) {
-    if (this._raven !== undefined) {
-        this._raven.captureException(new Error(err.msg), {extra: {request: err.request}});
-    }
-
-    statusmsg = {
-        msg: this.getMessage('error_' + params.request.toLowerCase()),
-        level: ZmStatusView.LEVEL_WARNING
-    };
-    this.displayStatusMessage(statusmsg);
-
-    logger.debug('Request error: ' + err.msg);
-    logger.debug(err.request);
-};
-
-
-/**
  * Helper function to get contact attributes to request for from settings
  */
 crunchmailZimlet.prototype._getRequestContactAttrs = function() {
@@ -62,7 +17,7 @@ crunchmailZimlet.prototype._getRequestContactAttrs = function() {
 /**
  * Trigger contact fetching
  */
-crunchmailZimlet.prototype.fetchContacts = function() {
+crunchmailZimlet.prototype.fetchContactsLegacy = function() {
     // initialize contacts objects
     this.zimbraContacts = {
         'tags'     : [],
@@ -72,7 +27,7 @@ crunchmailZimlet.prototype.fetchContacts = function() {
     };
     this.contactsTracker = [];
 
-    this.sendRequest('GetContactsRequest', 'zimbraMail', {a: this._getRequestContactAttrs()}, this.handleContacts);
+    this.sendRequest('GetContactsRequest', 'zimbraMail', {a: this._getRequestContactAttrs()}, this.handleContactsLegacy);
     this.sendRequest('GetAccountDistributionListsRequest', 'zimbraAccount', {ownerOf: 1, memberOf: 'all'}, this.handleDlists);
     this.sendRequest('GetTagRequest', 'zimbraMail', {}, this.handleTags);
 };
@@ -148,7 +103,7 @@ crunchmailZimlet.prototype._isSharedContact = function(id) {
 /**
  * Handle GetContacts response
  */
-crunchmailZimlet.prototype.handleContacts = function(params, result) {
+crunchmailZimlet.prototype.handleContactsLegacy = function(params, result) {
 
     var response = result.getResponse();
     var groupsArr = [];
@@ -303,7 +258,7 @@ crunchmailZimlet.prototype.handleDlists = function(params, result) {
 
             // Only consider Dlists matching settings
             if (
-                (dl.isOwner && crunchmailZimlet.settings.contactsDlistOwnerOf) || (
+                (dl.isOwner) || (
                     dl.isMember && crunchmailZimlet.settings.contactsDlistMemberOf && (
                         !dl.hasOwnProperty('via') ||
                         (dl.hasOwnProperty('via') && !crunchmailZimlet.settings.contactsDlistDirectMemberOnly)

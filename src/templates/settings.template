@@ -12,6 +12,10 @@
                 <input id="cmpref_debug" type="checkbox" value="bool" <$=data.debug$>/>
                 <label class="pref_label"><$=com_crunchmail_zimlet.pref_label_debug$></label>
             </div>
+            <div class="pref_row">
+                <input id="cmpref_experimental" type="checkbox" value="bool" <$=data.experimental$>/>
+                <label class="pref_label"><$=com_crunchmail_zimlet.pref_label_experimental$></label>
+            </div>
         </div>
         <div class="pref_section">
             <h4><$=com_crunchmail_zimlet.pref_title_contacts$></h4>
@@ -33,8 +37,8 @@
                 <label><$=com_crunchmail_zimlet.pref_label_contacts_dlist_direct_member_only$></label>
             </div>
             <div class="pref_row">
-                <input id="cmpref_contactsDlistOwnerOf" type="checkbox" value="bool" <$=data.contactsDlistOwnerOf$>/>
-                <label><$=com_crunchmail_zimlet.pref_label_contacts_dlist_owner_of$></label>
+                <input id="cmpref_contactsDlistIncludeHideInGal" type="checkbox" value="bool" <$=data.contactsDlistIncludeHideInGal$>/>
+                <label><$=com_crunchmail_zimlet.pref_label_contacts_dlist_include_hide_in_gal$></label>
             </div>
         </div>
     </div>

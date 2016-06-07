@@ -7,21 +7,23 @@ crunchmailZimlet.prototype._messageListener = function(data) {
 
     if(message.content.hasOwnProperty("apiKey")) {
         // Save new apiKey in Zimbra preference
-        apiKey = message.content.apiKey;
-        this.setUserProperty("crunchmail_api_key", apiKey, true);
+        var apiKey = message.content.apiKey;
+        this._getOrSaveSetting("api_key", apiKey, true, true);
         crunchmailZimlet.settings.apiKey = apiKey;
 
-        if(apiKey !== "") {
-            var protectedKey = logger.hide(apiKey);
-            logger.debug("apiKey "+protectedKey+" saved");
-        }
-        else {
+        if(apiKey === "") {
             logger.debug("apiKey deleted");
         }
     }
     else if(message.content.hasOwnProperty("getContacts")) {
-        // Launch request to get all zimbra contacts
-        crunchmailZimlet.prototype.fetchContacts();
+        if (crunchmailZimlet.settings.experimental) {
+            var request = message.content.getContacts;
+            var asTree = request.hasOwnProperty("asTree") ? request.asTree : false;
+            crunchmailZimlet.prototype.fetchContacts(asTree);
+        } else {
+            // Launch requests to get all zimbra contacts (LEGACY MODE)
+            crunchmailZimlet.prototype.fetchContactsLegacy();
+        }
     }
     else {
         logger.warn("PostMessage type not matched.");
