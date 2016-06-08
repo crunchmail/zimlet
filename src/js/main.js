@@ -9,6 +9,17 @@ function _getQueryArgByName (name) {
     return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
+function _BETA (func, fallback) {
+    if (crunchmailZimlet.settings.experimental) {
+        if (func) {
+            logger.debug('Executing Beta function: '+func.name);
+            func();
+        }
+    } else {
+        if (fallback) fallback();
+    }
+}
+
 com_crunchmail_zimlet_HandlerObject.prototype = new ZmZimletBase();
 com_crunchmail_zimlet_HandlerObject.prototype.constructor = com_crunchmail_zimlet_HandlerObject;
 var crunchmailZimlet = com_crunchmail_zimlet_HandlerObject;
@@ -18,7 +29,7 @@ crunchmailZimlet.prototype._getOrSaveSetting = function(setting, value, save, fo
     force_save = undefined === force_save ? false : force_save;
     // if force_save, we need to pass save to setUserProperty anyway
     if (force_save) save = true;
-    
+
     var currentSetting = this.getUserProperty(setting);
 
     if ((undefined === currentSetting && save) || force_save) {
@@ -144,6 +155,13 @@ crunchmailZimlet.prototype.appActive = function(appName, active) {
             if (active) {
                 logger.debug("App active");
 
+                window.document.title = 'Zimbra: Crunchmail';
+
+                // Add a new listener to allow user to refresh iframe content
+                var refresh = appCtxt.refreshButton;
+                refresh.removeSelectionListeners();
+                refresh.addSelectionListener(new AjxListener(this, this._refreshIframe));
+
                 /*
                 * reload iframe if API URL has changed
                 */
@@ -167,10 +185,6 @@ crunchmailZimlet.prototype.appActive = function(appName, active) {
                 if(zmMenu) {
                     zmMenu.style.display = 'none';
                 }
-                zmRefresh = document.getElementById('CHECK_MAIL');
-                if(zmRefresh) {
-                    zmRefresh.style.display = 'none';
-                }
             }else {
                 // Reset usual Zimbra UX elements to their defaults
                 skin._showEl("skin_td_tree", true);
@@ -179,10 +193,6 @@ crunchmailZimlet.prototype.appActive = function(appName, active) {
                 zmMenu = document.getElementById('ztb__NEW_MENU_items');
                 if(zmMenu) {
                     zmMenu.style.display = '';
-                }
-                zmRefresh = document.getElementById('CHECK_MAIL');
-                if(zmRefresh) {
-                    zmRefresh.style.display = '';
                 }
             }
             break;
@@ -226,4 +236,13 @@ crunchmailZimlet.prototype._setTabContent = function(appName) {
         'src="'+ crunchmailZimlet.settings.iframeUrl +'?apiUrl='+ crunchmailZimlet.settings.apiUrl +'&apiKey='+ crunchmailZimlet.settings.apiKey +'" ' +
         'width="100%" height="100%" /></iframe>'
     );
+};
+
+/**
+ * Callback function to refresh iFrame when user clicks on Zimbra UX refresh button
+ */
+crunchmailZimlet.prototype._refreshIframe = function(obj) {
+    logger.debug('Refreshing iFrame');
+    var iframe = document.getElementById('tabiframe-app');
+    iframe.src = iframe.src;
 };

@@ -2,6 +2,8 @@
  * Listen to messages from iframe
  */
 crunchmailZimlet.prototype._messageListener = function(data) {
+    that = this;
+    
     var message = JSON.parse(data);
     logger.debug(message);
 
@@ -16,14 +18,14 @@ crunchmailZimlet.prototype._messageListener = function(data) {
         }
     }
     else if(message.content.hasOwnProperty("getContacts")) {
-        if (crunchmailZimlet.settings.experimental) {
+        _BETA(function() {
             var request = message.content.getContacts;
             var asTree = request.hasOwnProperty("asTree") ? request.asTree : false;
-            crunchmailZimlet.prototype.fetchContacts(asTree);
-        } else {
+            that.fetchContacts(asTree);
+        }, function() {
             // Launch requests to get all zimbra contacts (LEGACY MODE)
-            crunchmailZimlet.prototype.fetchContactsLegacy();
-        }
+            that.fetchContactsLegacy();
+        });
     }
     else {
         logger.warn("PostMessage type not matched.");

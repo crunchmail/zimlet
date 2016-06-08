@@ -58,5 +58,8 @@ crunchmailZimlet.prototype.handleContacts = function(params, result) {
     logger.debug('GetContacts(Tree) response');
     logger.debug(response);
 
-    this.postMessage({'contacts': [response[params.response]]});
+    var data = response[params.response];
+
+    if (data.hasOwnProperty('timer')) logger.debug('Contacts fetched in: ' + data.timer._content);
+    this.postMessage({'contacts': [data]});
 };
