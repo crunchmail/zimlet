@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zimletConfig name="com_crunchmail_zimlet" version="VERSION">
   <global>
-    <property name="iframe_url">https://dentifrice.crunchmail.net/zimlet/#/</property>
+    <property name="iframe_url">http://munch.local/zimlet/entrypoint.html</property>
     <property name="default_api_url">https://munch.local/</property>
   </global>
 </zimletConfig>

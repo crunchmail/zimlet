@@ -4,8 +4,8 @@
     <property name="zimlet_version">VERSION</property>
     <property name="zimlet_commit">COMMIT</property>
     <property name="zimlet_env">ENVIRONMENT</property>
-    <property name="iframe_url">https://cdn.crunchmail.net/zimlet-staging/#/</property>
-    <property name="default_api_url">https://staging.crunchmail.net/</property>
+    <property name="iframe_url">https://cdn.crunchmail.net/zimlet-staging/entrypoint.html</property>
+    <property name="default_api_url">https://api.munch/</property>
     <property name="sentry_dsn">SENTRY_DSN</property>
     <property name="sentry_debug">true</property>
   </global>
