@@ -132,5 +132,5 @@ function bump(importance) {
 }
 
 gulp.task('patch', function() { return bump('patch'); });
-gulp.task('feature', function() { return bump('minor'); });
-gulp.task('release', function() { return bump('major'); });
+gulp.task('minor', function() { return bump('minor'); });
+gulp.task('major', function() { return bump('major'); });
