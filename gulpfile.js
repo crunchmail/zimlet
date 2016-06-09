@@ -2,6 +2,7 @@ var gulp = require('gulp');
 var plugins = require('gulp-load-plugins')({
 	rename: {
 		'gulp-if': 'gulpif',
+		'gulp-tag-version': 'tag_version'
 	}
 });
 
@@ -11,17 +12,18 @@ var argv = require('yargs')
 
 var del = require('del');
 var merge = require('merge-stream');
+var semver = require('semver');
 
 // Define some variables
-var dev = argv.dev
 var prod = argv.env == 'prod' ? true : false;
+var local = argv.env == 'local' ? true : false;
 // allow to force prod-like behavior (minifying mostly)
 prod = argv.prod ? true : prod;
 
 // Get the current version for zimlet
 var p = require('./package.json');
 var git = require('git-rev-sync');
-var zimlet_version = dev === true ? 'dev' : p.version;
+var zimlet_version = local === true ? 'local' : p.version;
 var zimlet_commit = git.short();
 var sentry_dsn = 'https://ed60ef07a8de41989ef31e2886abf9c9@sentry.owk.cc/8';
 var dist = 'dist/' + argv.env + '/zimlet/';
@@ -116,3 +118,19 @@ gulp.task('zip', ['dist'], function() {
 gulp.task('default', function() {
 	gulp.start('zip');
 });
+
+function bump(importance) {
+	var version = semver.inc(require('./package.json').version, importance);
+
+    // get all the files to bump version in
+    return gulp.src(['./package.json', './bower.json'])
+        .pipe(plugins.bump({type: importance}))
+        .pipe(gulp.dest('./'))
+        .pipe(plugins.git.commit('bump version v'+version))
+		.pipe(plugins.filter('package.json'))
+        .pipe(plugins.tag_version());
+}
+
+gulp.task('patch', function() { return bump('patch'); });
+gulp.task('feature', function() { return bump('minor'); });
+gulp.task('release', function() { return bump('major'); });
