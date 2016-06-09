@@ -60,6 +60,6 @@ crunchmailZimlet.prototype.handleContacts = function(params, result) {
 
     var data = response[params.response];
 
-    if (data.hasOwnProperty('timer')) logger.debug('Contacts fetched in: ' + data.timer._content);
+    if (data.hasOwnProperty('timer')) logger.debug('Contacts fetched in: ' + data.timer);
     this.postMessage({'contacts': [data]});
 };
