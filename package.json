@@ -1,6 +1,6 @@
 {
   "name": "crunchmail_zimlet",
-  "version": "0.3.4",
+  "version": "0.4.0",
   "license": "UNLICENSED",
   "private": true,
   "description": "Zimlet for Crunchmail",
