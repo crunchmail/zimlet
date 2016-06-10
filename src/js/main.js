@@ -228,12 +228,13 @@ crunchmailZimlet.prototype.menuItemSelected = function(itemId) {
 */
 crunchmailZimlet.prototype._setTabContent = function(appName) {
     var app = appCtxt.getApp(appName);
+    var random = new Date().getTime();
 
     logger.debug('Setting tab content');
     // create iframe ...
     app.setContent(
         '<iframe id="tabiframe-app" style="border:0;" name="tabiframe-app" ' +
-        'src="'+ crunchmailZimlet.settings.iframeUrl +'?apiUrl='+ crunchmailZimlet.settings.apiUrl +'&apiKey='+ crunchmailZimlet.settings.apiKey +'" ' +
+        'src="'+ crunchmailZimlet.settings.iframeUrl +'?r='+random+'&apiUrl='+ crunchmailZimlet.settings.apiUrl +'&apiKey='+ crunchmailZimlet.settings.apiKey +'" ' +
         'width="100%" height="100%" /></iframe>'
     );
 };
