@@ -45,8 +45,9 @@ crunchmailZimlet.prototype.requestErrorCallback = function(params, err) {
  * Trigger contacts fetching
  */
 crunchmailZimlet.prototype.fetchContacts = function(asTree) {
+    var ext_debug = crunchmailZimlet.settings.debug ? '1' : '0';
     var request_base  = asTree ? 'GetContactsTree' : 'GetContacts';
-    this.sendRequest(request_base+'Request', 'crunchmail', {}, this.handleContacts, {'response': request_base+'Response'});
+    this.sendRequest(request_base+'Request', 'crunchmail', {debug: ext_debug}, this.handleContacts, {'response': request_base+'Response'});
 };
 
 /**
