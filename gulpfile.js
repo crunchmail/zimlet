@@ -28,7 +28,8 @@ var zimlet_commit = git.short();
 var sentry_dsn = 'https://ed60ef07a8de41989ef31e2886abf9c9@sentry.owk.cc/8';
 var dist = 'dist/' + argv.env + '/zimlet/';
 var zip_name = 'com_crunchmail_zimlet.zip';
-var zip_dest = 'dist/' + argv.env + '/' + zimlet_version + '/';
+var zip_subdir = argv.env == 'prod' ? zimlet_version + '/' : '';
+var zip_dest = 'dist/' + argv.env + '/' + zip_subdir;
 
 
 // Validate JS
@@ -75,7 +76,7 @@ gulp.task('dist', ['clean', 'jshint'], function() {
 		.pipe(plugins.concat('crunchmail_zimlet.js'))
 		// only minify for production (a lot faster)
 		.pipe(plugins.gulpif(prod, plugins.uglify({mangle: true})))
-	.pipe(plugins.sourcemaps.write())
+	.pipe(plugins.gulpif(prod, plugins.sourcemaps.write()))
 	.pipe(gulp.dest(dist));
 
 	gulp.src('src/' + argv.env + '-config_template.xml')
@@ -96,9 +97,7 @@ gulp.task('dist', ['clean', 'jshint'], function() {
 		'!src/*.properties',
 		'!src/com_crunchmail_zimlet.xml',
 		'!src/*-config_template.xml',
-		'!src/js/', '!src/js/**',
-		'crunchmail.png',
-		'crunchmail_logo.png'
+		'!src/js/', '!src/js/**'
 	])
 	.pipe(gulp.dest(dist));
 
@@ -131,6 +130,6 @@ function bump(importance) {
         .pipe(plugins.tag_version());
 }
 
-gulp.task('patch', function() { return bump('patch'); });
-gulp.task('minor', function() { return bump('minor'); });
-gulp.task('major', function() { return bump('major'); });
+gulp.task('bump-patch', function() { return bump('patch'); });
+gulp.task('bump-minor', function() { return bump('minor'); });
+gulp.task('bump-major', function() { return bump('major'); });

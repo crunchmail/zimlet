@@ -3,7 +3,7 @@
  */
 crunchmailZimlet.prototype._messageListener = function(data) {
     that = this;
-    
+
     var message = JSON.parse(data);
     logger.debug(message);
 
@@ -18,14 +18,9 @@ crunchmailZimlet.prototype._messageListener = function(data) {
         }
     }
     else if(message.content.hasOwnProperty("getContacts")) {
-        _BETA(function() {
-            var request = message.content.getContacts;
-            var asTree = request.hasOwnProperty("asTree") ? request.asTree : false;
-            that.fetchContacts(asTree);
-        }, function() {
-            // Launch requests to get all zimbra contacts (LEGACY MODE)
-            that.fetchContactsLegacy();
-        });
+        var request = message.content.getContacts;
+        var asTree = request.hasOwnProperty("asTree") ? request.asTree : false;
+        that.fetchContacts(asTree);
     }
     else {
         logger.warn("PostMessage type not matched.");

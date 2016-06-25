@@ -20,6 +20,11 @@ function _BETA (func, fallback) {
     }
 }
 
+crunchmailConstants = function() {};
+
+crunchmailConstants.UXID_SKIN_FP = 'skin_container_cmfs';
+crunchmailConstants.UXID_DWT_FP = 'CM_FULLPAGE';
+
 com_crunchmail_zimlet_HandlerObject.prototype = new ZmZimletBase();
 com_crunchmail_zimlet_HandlerObject.prototype.constructor = com_crunchmail_zimlet_HandlerObject;
 var crunchmailZimlet = com_crunchmail_zimlet_HandlerObject;
@@ -137,11 +142,37 @@ crunchmailZimlet.prototype.init = function() {
 * This method gets called when the "tab" application is opened for the first time.
 */
 crunchmailZimlet.prototype.appLaunch = function(appName) {
-    logger.debug("appLaunch");
+    logger.debug("App Launch");
     switch(appName) {
         case this._Crunchmail: {
             this._setTabContent(appName);
         }
+    }
+};
+
+crunchmailZimlet.prototype._setFpButton = function(appName) {
+    // create the fullpage button container
+    if (!this._fpContainer) {
+        this._fpContainer = document.createElement('div');
+        this._fpContainer.id = crunchmailConstants.UXID_SKIN_FP;
+        this._fpContainer.className = 'skin_container';
+        var skinContainer = document.getElementById("skin_container_global_buttons");
+        skinContainer.appendChild(this._fpContainer);
+    }
+    // create the fullpage button.
+    // we will toggle it's display in appActive()
+    if (!this._fpButton) {
+        var containerEl = document.getElementById(crunchmailConstants.UXID_SKIN_FP);
+    	if (!containerEl) {
+    		return;
+    	}
+        this._fpButton = new DwtToolBarButton({parent:DwtShell.getShell(window), id: crunchmailConstants.UXID_DWT_FP});
+        this._fpButton.setToolTipContent(this.getMessage('ui.fullpage.title'), true);
+        this._fpButton.setImage('FullPage');
+        this._fpButton.reparentHtmlElement(crunchmailConstants.UXID_SKIN_FP);
+
+        var fullpageListener = this._toggleFullpage.bind(this);
+        this._fpButton.addSelectionListener(fullpageListener);
     }
 };
 
@@ -156,6 +187,15 @@ crunchmailZimlet.prototype.appActive = function(appName, active) {
                 logger.debug("App active");
 
                 window.document.title = 'Zimbra: Crunchmail';
+
+                // Create fullpage control if necessary
+                this._setFpButton();
+
+                // Make sure fullpage control is visible
+                if (this._fpButton) {
+                    this._fpContainer.style.display = 'table-cell';
+                    this._fpButton.setVisibility(true);
+                }
 
                 // Add a new listener to allow user to refresh iframe content
                 var refresh = appCtxt.refreshButton;
@@ -186,6 +226,11 @@ crunchmailZimlet.prototype.appActive = function(appName, active) {
                     zmMenu.style.display = 'none';
                 }
             }else {
+                // Hide fullpage control
+                if (this._fpButton) {
+                    this._fpButton.setVisibility(false);
+                    this._fpContainer.style.display = 'none';
+                }
                 // Reset usual Zimbra UX elements to their defaults
                 skin._showEl("skin_td_tree", true);
                 skin._showEl("skin_tr_toolbar", true);
@@ -233,10 +278,40 @@ crunchmailZimlet.prototype._setTabContent = function(appName) {
     logger.debug('Setting tab content');
     // create iframe ...
     app.setContent(
-        '<iframe id="tabiframe-app" style="border:0;" name="tabiframe-app" ' +
+        '<div id="crunchmail-fullpage-control">' +
+        '<img src="/service/zimlet/com_crunchmail_zimlet/img/fullpage_exit_icon.png" />' + this.getMessage('ui.fullpage.exit') +
+        '</div>' +
+        '<div class="cm_overlay"><div>' +
+        '<div class="spinner"><div class="bounce1"></div><div class="bounce2"></div><div class="bounce3"></div></div>' +
+        '</div></div>' +
+        '<iframe id="crunchmail-iframe" style="border:0;" name="crunchmail-iframe" ' +
         'src="'+ crunchmailZimlet.settings.iframeUrl +'?r='+random+'&apiUrl='+ crunchmailZimlet.settings.apiUrl +'&apiKey='+ crunchmailZimlet.settings.apiKey +'" ' +
         'width="100%" height="100%" /></iframe>'
     );
+    // Our iFrame loads twice because of the redirect in entrypoint.html
+    // use a counter to hide overlay on actual load
+    this._iframeLoadCounter = 1;
+    var that = this;
+    jQuery('#crunchmail-iframe').on('load', function() {
+        if (that._iframeLoadCounter === 2) {
+            jQuery('.cm_overlay').fadeOut(500);
+            // reset counter for future iframe reloads
+            that._iframeLoadCounter = 1;
+        } else {
+            that._iframeLoadCounter++;
+        }
+    });
+    jQuery('#crunchmail-fullpage-control').click(function() {
+        that._toggleFullpage();
+    });
+};
+
+/**
+ * Callback function to switch iFrame to static position when user clicks fullpage button
+ */
+crunchmailZimlet.prototype._toggleFullpage = function(obj) {
+    jQuery('#crunchmail-iframe').toggleClass('fullpage');
+    jQuery('#crunchmail-fullpage-control').toggleClass('visible');
 };
 
 /**
@@ -244,6 +319,10 @@ crunchmailZimlet.prototype._setTabContent = function(appName) {
  */
 crunchmailZimlet.prototype._refreshIframe = function(obj) {
     logger.debug('Refreshing iFrame');
-    var iframe = document.getElementById('tabiframe-app');
+    var iframe = document.getElementById('crunchmail-iframe');
+
+    // Show overlay
+    jQuery('.cm_overlay').show(0);
+    // Reload iFrame
     iframe.src = iframe.src;
 };

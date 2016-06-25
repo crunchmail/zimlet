@@ -1,6 +1,6 @@
 <template id='settings'>
     <div>
-        <img class="pref_logo" src="/service/zimlet/com_crunchmail_zimlet/crunchmail_logo.png" alt="Crunchmail Logo"/>
+        <img class="pref_logo" src="/service/zimlet/com_crunchmail_zimlet/img/crunchmail_logo.png" alt="Crunchmail Logo"/>
         <div class="pref_section">
             <h4><$=com_crunchmail_zimlet.pref_title_global$></h4>
             <div class="pref_row">
