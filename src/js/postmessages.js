@@ -5,6 +5,7 @@ crunchmailZimlet.prototype._messageListener = function(data) {
     that = this;
 
     var message = JSON.parse(data);
+    logger.debug('Received PostMessage');
     logger.debug(message);
 
     if(message.content.hasOwnProperty("apiKey")) {

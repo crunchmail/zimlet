@@ -1,7 +1,7 @@
 /**
  * Send SOAP request to Zimbra
  */
-crunchmailZimlet.prototype.sendRequest = function(request, urn, args, callback, callbackArgs) {
+crunchmailZimlet.prototype.sendRequest = function(request, urn, args, callback, callbackArgs, errorCallback) {
     callbackArgs = undefined === callbackArgs ? {} : callbackArgs;
 
     var jsonObj = {};
@@ -17,7 +17,7 @@ crunchmailZimlet.prototype.sendRequest = function(request, urn, args, callback, 
         jsonObj       : jsonObj,
         asyncMode     : true,
         callback      : new AjxCallback(this, callback, callbackArgs),
-        errorCallback : new AjxCallback(this, this.requestErrorCallback, {request: request, args: callbackArgs})
+        errorCallback : new AjxCallback(this, this.handleRequestError, {request: request, args: callbackArgs, callback: errorCallback})
     };
 
     appCtxt.getAppController().sendRequest(params);
@@ -26,7 +26,9 @@ crunchmailZimlet.prototype.sendRequest = function(request, urn, args, callback, 
 /**
  * Handle request errors
  */
-crunchmailZimlet.prototype.requestErrorCallback = function(params, err) {
+crunchmailZimlet.prototype.handleRequestError = function(params, err) {
+    logger.debug('Request error callback');
+
     if (this._raven !== undefined) {
         this._raven.captureException(new Error(err.msg), {extra: {request: err.request}});
     }
@@ -39,6 +41,15 @@ crunchmailZimlet.prototype.requestErrorCallback = function(params, err) {
 
     logger.debug('Request error: ' + err.msg);
     logger.debug(err.request);
+
+    // Call requested callback if it exists
+    if (undefined !== params.callback) {
+        // Need to pass this otherwise context in callback is wrong
+        params.callback(this);
+    }
+
+    // Return true to avoid error dialog popup
+    return true;
 };
 
 /**
@@ -48,8 +59,13 @@ crunchmailZimlet.prototype.fetchContacts = function(asTree) {
     var ext_debug = crunchmailZimlet.settings.debug ? '1' : '0';
     var request_base  = asTree ? 'GetContactsTree' : 'GetContacts';
     if (this._getContactsLock === undefined || this._getContactsLock !== request_base) {
+        logger.debug('Sending request for contacts: ' + request_base);
         this._getContactsLock = request_base;
-        this.sendRequest(request_base+'Request', 'crunchmail', {debug: ext_debug}, this.handleContacts, {'response': request_base+'Response'});
+        this.sendRequest(
+            request_base+'Request', 'crunchmail', {debug: ext_debug},
+            this.handleContacts, {response: request_base+'Response'},
+            this.handleContactsError
+        );
     } else {
         logger.debug('Received duplicate ' + request_base + ' request, ignoring.');
     }
@@ -71,4 +87,14 @@ crunchmailZimlet.prototype.handleContacts = function(params, result) {
 
     // Reset lock so we can process new requests
     this._getContactsLock = '';
+};
+
+crunchmailZimlet.prototype.handleContactsError = function(app) {
+    logger.debug('handle GetContacts(Tree) request error');
+
+    data = {error: ''};
+    app.postMessage({'contacts': [data]});
+
+    // Reset lock so we can process new requests
+    app._getContactsLock = '';
 };
