@@ -47,7 +47,12 @@ crunchmailZimlet.prototype.requestErrorCallback = function(params, err) {
 crunchmailZimlet.prototype.fetchContacts = function(asTree) {
     var ext_debug = crunchmailZimlet.settings.debug ? '1' : '0';
     var request_base  = asTree ? 'GetContactsTree' : 'GetContacts';
-    this.sendRequest(request_base+'Request', 'crunchmail', {debug: ext_debug}, this.handleContacts, {'response': request_base+'Response'});
+    if (this._getContactsLock === undefined || this._getContactsLock !== request_base) {
+        this._getContactsLock = request_base;
+        this.sendRequest(request_base+'Request', 'crunchmail', {debug: ext_debug}, this.handleContacts, {'response': request_base+'Response'});
+    } else {
+        logger.debug('Received duplicate ' + request_base + ' request, ignoring.');
+    }
 };
 
 /**
@@ -63,4 +68,7 @@ crunchmailZimlet.prototype.handleContacts = function(params, result) {
 
     if (data.hasOwnProperty('timer')) logger.debug('Contacts fetched in: ' + data.timer);
     this.postMessage({'contacts': [data]});
+
+    // Reset lock so we can process new requests
+    this._getContactsLock = '';
 };

@@ -41,5 +41,6 @@
                 <label><$=com_crunchmail_zimlet.pref_label_contacts_dlist_include_hide_in_gal$></label>
             </div>
         </div>
+        <p class="pref_version">Version: <$=data.zimletVersion$> | Commit: <$=data.zimletCommit$></p>
     </div>
 </template>

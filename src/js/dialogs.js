@@ -45,6 +45,9 @@ crunchmailZimlet.prototype._displayPrefDialog = function() {
             tplData[key] = tplData[key] === true ? 'checked' : '';
         }
     }
+    // And add the zimlet version/commit for info
+    tplData.zimletVersion = this._zimletContext.getConfig('zimlet_version');
+    tplData.zimletCommit = this._zimletContext.getConfig('zimlet_commit');
 
     var html = AjxTemplate.expand('com_crunchmail_zimlet.templates.settings#settings', tplData);
     var title = this.getMessage('pref_title');
