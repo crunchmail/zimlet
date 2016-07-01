@@ -55,7 +55,9 @@ crunchmailZimlet.prototype.postMessage = function(data) {
     };
 
     var jsonToSend = JSON.stringify(obj);
-    frames[0].postMessage(jsonToSend, "*");
+    var iframe = document.getElementById('crunchmail-iframe');
+    iframe.contentWindow.postMessage(jsonToSend, "*");
 
     logger.debug('Posted message to iframe');
+    logger.debug(obj);
 };
