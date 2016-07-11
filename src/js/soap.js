@@ -55,14 +55,14 @@ crunchmailZimlet.prototype.handleRequestError = function(params, err) {
 /**
  * Trigger contacts fetching
  */
-crunchmailZimlet.prototype.fetchContacts = function(asTree) {
+crunchmailZimlet.prototype.fetchContacts = function(asTree, existing) {
     var ext_debug = crunchmailZimlet.settings.debug ? '1' : '0';
     var request_base  = asTree ? 'GetContactsTree' : 'GetContacts';
     if (this._getContactsLock === undefined || this._getContactsLock !== request_base) {
         logger.debug('Sending request for contacts: ' + request_base);
         this._getContactsLock = request_base;
         this.sendRequest(
-            request_base+'Request', 'crunchmail', {debug: ext_debug},
+            request_base+'Request', 'crunchmail', {debug: ext_debug, existing: existing},
             this.handleContacts, {response: request_base+'Response'},
             this.handleContactsError
         );

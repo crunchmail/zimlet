@@ -21,7 +21,8 @@ crunchmailZimlet.prototype._messageListener = function(data) {
     else if(message.content.hasOwnProperty("getContacts")) {
         var request = message.content.getContacts;
         var asTree = request.hasOwnProperty("asTree") ? request.asTree : false;
-        that.fetchContacts(asTree);
+        var existing = request.hasOwnProperty("asTree") ? request.existing : [];
+        that.fetchContacts(asTree, existing);
     }
     else {
         logger.warn("PostMessage type not matched.");
