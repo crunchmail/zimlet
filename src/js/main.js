@@ -24,6 +24,15 @@ crunchmailConstants = function() {};
 
 crunchmailConstants.UXID_SKIN_FP = 'skin_container_cmfs';
 crunchmailConstants.UXID_DWT_FP = 'CM_FULLPAGE';
+crunchmailConstants.CONTACTS_ATTRS = [
+    'firstName',
+    'lastName',
+    'namePrefix',
+    'middleName',
+    'maidenName',
+    'company',
+    'jobTitle'
+];
 
 com_crunchmail_zimlet_HandlerObject.prototype = new ZmZimletBase();
 com_crunchmail_zimlet_HandlerObject.prototype.constructor = com_crunchmail_zimlet_HandlerObject;

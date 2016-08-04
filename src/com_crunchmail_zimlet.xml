@@ -5,7 +5,7 @@
   <include>bundle.js</include>
   <include>crunchmail_zimlet.js</include>
   <include>templates/settings.template.js</include>
-  <includeCSS>main.css</includeCSS>
+  <includeCSS>bundle.css</includeCSS>
 	<handlerObject>com_crunchmail_zimlet_HandlerObject</handlerObject>
 	<zimletPanelItem label="${msg.label}" icon="Crunchmail-panelIcon">
         <toolTipText>${msg.description}</toolTipText>

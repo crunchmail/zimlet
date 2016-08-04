@@ -92,9 +92,14 @@ gulp.task('dist', ['clean', 'jshint'], function() {
 	.pipe(plugins.iconv({encoding: 'ISO-8859-1'}))
 	.pipe(gulp.dest(dist));
 
+	var css = gulp.src(['src/*.css'])
+	.pipe(plugins.concat('bundle.css'))
+	.pipe(gulp.dest(dist));
+
 	var other = gulp.src([
 		'src/**',
 		'!src/*.properties',
+		'!src/*.css',
 		'!src/com_crunchmail_zimlet.xml',
 		'!src/*-config_template.xml',
 		'!src/js/', '!src/js/**'
@@ -103,7 +108,7 @@ gulp.task('dist', ['clean', 'jshint'], function() {
 
 	// we need to merge so we can return and correctly wait for
 	// completion before building the zip (next task)
-	return merge(xml, js, properties, other);
+	return merge(xml, js, properties, css, other);
 });
 
 // Zip

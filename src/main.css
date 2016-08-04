@@ -35,6 +35,26 @@
     margin: 5px 0 10px;
     min-width: 450px;
 }
+.pref_row.indent {
+    padding-left: 25px;
+    min-width: 425px;
+}
+.pref_row.grid {
+    margin-left: -20px;
+}
+.pref_row.pad {
+    padding: 0 10px;
+}
+
+.pref_row .title {
+    width: 100%;
+    text-align: center;
+    padding-bottom: 10px;
+}
+
+.pref_row .center {
+    text-align: center;
+}
 
 .pref_row label {
     padding-left: 1em;
@@ -44,11 +64,15 @@
     display: block;
     text-align: center;
     margin: 0.5em auto;
-    width: 90%;
+    width: 93%;
 }
 
 .pref_row input[type=checkbox] {
     margin-left: 1em;
+}
+
+.pref_row input[type=checkbox][disabled] + label {
+    color: #747474;
 }
 
 .pref_helper {
@@ -56,11 +80,48 @@
     color: #747474;
     text-align: center;
 }
+.pref_helper.pad {
+    padding-top: 10px;
+}
+
+.pref_multiselect {
+    width: 100%;
+    padding-bottom: 20px;
+    overflow-y: auto;
+    height: 130px;
+    max-width: 155px;
+}
+.pref_multiselect option {
+    max-width: 155px;
+}
+
+#pref_attr_add,
+#pref_attr_del {
+    font-size: 16px;
+    font-weight: bold;
+    background: #ccc;
+    padding: 5px 0;
+    color: black;
+    border-radius: 3px;
+    display: block;
+    margin: 24px 0px;
+}
 
 .pref_version {
     text-align: center;
     color: #999;
     font-size: 10px;
+}
+
+#pref_extension_missing {
+    display: none;
+    color: red;
+    font-weight: bold;
+}
+
+#pref_http_url_warning {
+    display: none;
+    color: red;
 }
 
 #crunchmail-fullpage-control {
