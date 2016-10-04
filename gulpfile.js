@@ -135,6 +135,6 @@ function bump(importance) {
         .pipe(plugins.tag_version());
 }
 
-gulp.task('bump-patch', function() { return bump('patch'); });
-gulp.task('bump-minor', function() { return bump('minor'); });
-gulp.task('bump-major', function() { return bump('major'); });
+gulp.task('patch', function() { return bump('patch'); });
+gulp.task('minor', function() { return bump('minor'); });
+gulp.task('major', function() { return bump('major'); });
