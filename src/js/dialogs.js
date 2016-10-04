@@ -44,16 +44,32 @@ crunchmailZimlet.prototype._popupPrefDialog = function(tplData) {
     /**
      *  We need some javascript magic to make the pref dialog nicer
      */
-    that = this;
+    var that = this;
     if (!tplData.extensionOK) {
         jQuery('#pref_extension_version').hide();
         jQuery('#pref_extension_missing').show();
     }
-    // contacts attrs multiselect
+
+    // contacts attrs multiselects
+    var current_attrs = [];
+    if (tplData.contactsAttrs && tplData.contactsAttrs != 'null' && tplData.contactsAttrs !== '') {
+        current_attrs = tplData.contactsAttrs.split(',');
+        jQuery.each(current_attrs, function(i, attr) {
+            var display_name = that.getMessage('pref_contactsattrs_'+attr);
+            jQuery('<option value='+attr+'>'+display_name+'</option>')
+            .appendTo('#cmpref_contactsAttrs').on('mousedown', function(e) {
+                this.selected = !this.selected;
+                e.preventDefault();
+            });
+        });
+    }
     jQuery.each(crunchmailConstants.CONTACTS_ATTRS, function(i, attr) {
-        // Populate the multiselects
-        // TODO: check if already selected (tplData.contactsAttrs)
-        jQuery('<option value='+attr+'>'+that.getMessage('pref_contactsattrs_'+attr)+'</option>')
+        var style = '';
+        if (jQuery.inArray(attr, current_attrs) !== -1) {
+            style = 'display: none;';
+        }
+        var display_name = that.getMessage('pref_contactsattrs_'+attr);
+        jQuery('<option value='+attr+' style="'+style+'">'+display_name+'</option>')
         .appendTo('#cmpref_contactsAttrs_lib').on('mousedown', function(e) {
             this.selected = !this.selected;
             e.preventDefault();
@@ -140,14 +156,19 @@ crunchmailZimlet.prototype._prefSaveBtn = function() {
     var that = this;
     settings = Object.keys(crunchmailZimlet.settings);
     settings.forEach(function(s) {
-        el = document.getElementById('cmpref_' + s);
-        if (el) {
-            var val = el.value;
+        el = jQuery('#cmpref_' + s);
+        if (el.length) {
 
-            if (val === 'bool') {
-                crunchmailZimlet.settings[s] = that._getOrSaveSetting(humps.decamelize(s), el.checked, true, true);
-            } else {
+            if (el.is('select[multiple]')) {
+                // Multiselects need a bit more work
+                el.children('option').prop('selected', true);
+                var val = el.val() !== null ? el.val().join(',') : '';
                 crunchmailZimlet.settings[s] = that._getOrSaveSetting(humps.decamelize(s), val, true, true);
+                el.children('option').prop('selected', false);
+            } else if (el.is('input:checkbox')) {
+                crunchmailZimlet.settings[s] = that._getOrSaveSetting(humps.decamelize(s), el.is(":checked"), true, true);
+            } else {
+                crunchmailZimlet.settings[s] = that._getOrSaveSetting(humps.decamelize(s), el.val(), true, true);
             }
         }
     });

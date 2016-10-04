@@ -14,7 +14,6 @@
 		</contextMenu>
 	</zimletPanelItem>
 	<userProperties>
-		<property type="string" label="" name="api_url"/>
         <property type="string" label="" name="api_key"/>
         <property type="boolean" label="" name="debug"/>
         <property type="boolean" label="" name="experimental"/>
