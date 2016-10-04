@@ -104,29 +104,7 @@ crunchmailZimlet.prototype.init = function() {
     // First setup our error reporter
     this._setupRaven();
 
-    // store the settings to be used throughout the application
-    crunchmailZimlet.settings.iframeUrl = this._zimletContext.getConfig('iframe_url');
-
-    /** TEMP **/
-    previous_url = this._zimletContext.getConfig('default_api_url');
-    if (this.getUserProperty('crunchmail_api_url') !== undefined) {
-        previous_url = this.getUserProperty('crunchmail_api_url');
-    }
-    crunchmailZimlet.settings.apiUrl = this._getOrSaveSetting('api_url', previous_url, true);
-    /*****/
-    // crunchmailZimlet.settings.apiUrl = this._getOrSaveSetting('crunchmail_api_url', this._zimletContext.getConfig('default_api_url'), true);
-
-    // simple flag to allow iframe reloading when setting is changed
-    crunchmailZimlet.settings.apiUrlChanged = false;
-
-    /** TEMP **/
-    previous_key = '';
-    if (this.getUserProperty('crunchmail_api_key') !== undefined) {
-        previous_key = this.getUserProperty('crunchmail_api_key');
-    }
-    crunchmailZimlet.settings.apiKey = this._getOrSaveSetting('api_key', previous_key, true);
-    /*****/
-    // crunchmailZimlet.settings.apiKey = this._getOrSaveSetting('crunchmail_api_key', '', true);
+    crunchmailZimlet.settings.apiKey = this._getOrSaveSetting('crunchmail_api_key', '', true);
 
     // we enable debug by default for now
     crunchmailZimlet.settings.debug = this._getOrSaveSetting('debug', true, true);
@@ -211,18 +189,6 @@ crunchmailZimlet.prototype.appActive = function(appName, active) {
                 refresh.removeSelectionListeners();
                 refresh.addSelectionListener(new AjxListener(this, this._refreshIframe));
 
-                /*
-                * reload iframe if API URL has changed
-                */
-                if(crunchmailZimlet.settings.apiUrlChanged) {
-                    // if(iframe !== null) {
-                    logger.info("API URL changed, reloading iFrame");
-                    this._setTabContent(appName);
-                    this.postMessage({"refresh": true});
-                    // }
-                    crunchmailZimlet.settings.apiUrlChanged = false;
-                }
-
                 // Setup the postmessage listener on our end
                 this.setupMessagesListener();
 
@@ -284,17 +250,24 @@ crunchmailZimlet.prototype._setTabContent = function(appName) {
     var app = appCtxt.getApp(appName);
     var random = new Date().getTime();
 
+    var iframe_url = this._zimletContext.getConfig('iframe_url');
+    var api_url = this._zimletContext.getConfig('api_url');
+    if (crunchmailZimlet.settings.experimental) {
+        iframe_url = this._zimletContext.getConfig('beta_iframe_url');
+        api_url = this._zimletContext.getConfig('beta_api_url');
+    }
+
     logger.debug('Setting tab content');
     // create iframe ...
     app.setContent(
-        '<div id="crunchmail-fullpage-control">' +
+        '<div id="crunchmail-fullpage-control">'+
         '<img src="/service/zimlet/com_crunchmail_zimlet/img/fullpage_exit_icon.png" />' + this.getMessage('ui.fullpage.exit') +
-        '</div>' +
-        '<div class="cm_overlay"><div>' +
-        '<div class="spinner"><div class="bounce1"></div><div class="bounce2"></div><div class="bounce3"></div></div>' +
-        '</div></div>' +
+        '</div>'+
+        '<div class="cm_overlay"><div>'+
+        '<div class="spinner"><div class="bounce1"></div><div class="bounce2"></div><div class="bounce3"></div></div>'+
+        '</div></div>'+
         '<iframe id="crunchmail-iframe" style="border:0;" name="crunchmail-iframe" ' +
-        'src="'+ crunchmailZimlet.settings.iframeUrl +'?r='+random+'&apiUrl='+ crunchmailZimlet.settings.apiUrl +'&apiKey='+ crunchmailZimlet.settings.apiKey +'" ' +
+        'src="'+ iframe_url +'?r='+ random +'&apiUrl='+ api_url +'&apiKey='+ crunchmailZimlet.settings.apiKey +'" '+
         'width="100%" height="100%" /></iframe>'
     );
     // Our iFrame loads twice because of the redirect in entrypoint.html

@@ -84,30 +84,6 @@ crunchmailZimlet.prototype._popupPrefDialog = function(tplData) {
             jQuery(this).remove();
         });
     });
-    // cleanup API URL
-    jQuery('#cmpref_apiUrl').blur(function() {
-        var url = jQuery(this).val();
-        if (url !== '') {
-            // First some sanity checks
-            if (!url.startsWith('http')) url = 'https://' + url;
-            if (!url.endsWith('/')) url += '/';
-            // Then extract hostname part and reconstruct
-            // to remove version
-            var regex = /^(https?\:)\/\/([^\/]+\/)(v[0-9]+.*\/?)*$/i;
-            var match = regex.exec(url);
-            if (match[3] !== undefined) {
-                url = match[1] + '//' + match[2];
-            }
-            if (match[1] == 'http:' && location.protocol == 'https:') {
-                jQuery('#pref_http_url_warning').show();
-            } else {
-                jQuery('#pref_http_url_warning').hide();
-            }
-            jQuery(this).val(url);
-        } else {
-            jQuery(this).val(tplData.defaultApiUrl);
-        }
-    });
     // list member checkbox group
     var list_member = jQuery('#cmpref_contactsDlistMemberOf');
     var direct_member = jQuery('#cmpref_contactsDlistDirectMemberOnly');
@@ -139,12 +115,6 @@ crunchmailZimlet.prototype._displayPrefDialog = function() {
         }
     }
 
-    tplData.defaultApiUrl = this._zimletContext.getConfig('default_api_url');
-    // sanity check
-    if (tplData.apiUrl === null || tplData.apiUrl === '') {
-        tplData.apiUrl = tplData.defaultApiUrl;
-    }
-
     // Add the zimlet version/commit for info
     tplData.zimletVersion = this._zimletContext.getConfig('zimlet_version');
     tplData.zimletCommit = this._zimletContext.getConfig('zimlet_commit');
@@ -173,9 +143,6 @@ crunchmailZimlet.prototype._prefSaveBtn = function() {
         el = document.getElementById('cmpref_' + s);
         if (el) {
             var val = el.value;
-
-            // Mark API URL setting as changed to reload iFrame
-            if (s === 'apiUrl' && crunchmailZimlet.settings.apiUrl !== val) crunchmailZimlet.settings.apiUrlChanged = true;
 
             if (val === 'bool') {
                 crunchmailZimlet.settings[s] = that._getOrSaveSetting(humps.decamelize(s), el.checked, true, true);

@@ -4,11 +4,6 @@
         <div class="pref_section">
             <h4><$=com_crunchmail_zimlet.pref_title_global$></h4>
             <div class="pref_row">
-                <label><$=com_crunchmail_zimlet.pref_label_apiurl$></label>
-                <input id="cmpref_apiUrl" type="text" value="<$=data.apiUrl$>" placeholder="<$=data.defaultApiUrl$>"/>
-                <div id="pref_http_url_warning" class="pref_helper"><$=com_crunchmail_zimlet.pref_http_url_warning$></div>
-            </div>
-            <div class="pref_row">
                 <input id="cmpref_debug" type="checkbox" value="bool" <$=data.debug$>/>
                 <label class="pref_label"><$=com_crunchmail_zimlet.pref_label_debug$></label>
             </div>
