@@ -21,6 +21,6 @@
         <property type="boolean" label="" name="contacts_include_shared"/>
         <property type="boolean" label="" name="contacts_dlist_member_of"/>
         <property type="boolean" label="" name="contacts_dlist_direct_member_only"/>
-        <property type="boolean" label="" name="contacts_dlist_owner_of"/>
+        <property type="boolean" label="" name="contacts_dlist_include_hide_in_gal"/>
 	</userProperties>
 </zimlet>

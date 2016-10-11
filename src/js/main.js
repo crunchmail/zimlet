@@ -104,7 +104,7 @@ crunchmailZimlet.prototype.init = function() {
     // First setup our error reporter
     this._setupRaven();
 
-    crunchmailZimlet.settings.apiKey = this._getOrSaveSetting('crunchmail_api_key', '', true);
+    crunchmailZimlet.settings.apiKey = this._getOrSaveSetting('api_key', '', true);
 
     // we enable debug by default for now
     crunchmailZimlet.settings.debug = this._getOrSaveSetting('debug', true, true);
