@@ -252,10 +252,6 @@ crunchmailZimlet.prototype._setTabContent = function(appName) {
 
     var iframe_url = this._zimletContext.getConfig('iframe_url');
     var api_url = this._zimletContext.getConfig('api_url');
-    if (crunchmailZimlet.settings.experimental) {
-        iframe_url = this._zimletContext.getConfig('beta_iframe_url');
-        api_url = this._zimletContext.getConfig('beta_api_url');
-    }
 
     logger.debug('Setting tab content');
     // create iframe ...
